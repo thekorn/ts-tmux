@@ -8,9 +8,10 @@ import { delay } from './lib/utils'
 
 
 async function main(): Promise<void> {
-  const tmux = new DockerTmux('tmux')
+  const tmux = DockerTmux.newWithContainerName('tmux')
   await tmux.create()
-  const client = new TmuxClient(new DockerTmux())
+  const tmux2 = DockerTmux.newWithVolume(tmux.volume)
+  const client = new TmuxClient(tmux2)
   console.log('list sessions....');
   await client.listSessions()
   await client.newSession()

@@ -1,49 +1,67 @@
+/* eslint-disable @typescript-eslint/no-parameter-properties */
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 import execa from 'execa'
+
+type TmuxDockerVersions = 'tmux:latest'
 
 interface IDockerRunArguments {
   name?: string;
   tty?: boolean;
   volumes?: string[];
   rm?: boolean;
-  detach?: boolean
 }
 
-function getDockerRunArgs(args: IDockerRunArguments): string[] {
+function getRandomString(): string {
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+
+function getDockerRunArgs(detach: boolean, args: IDockerRunArguments): string[] {
   const dockerArgs: string[] = []
   if (args.name) dockerArgs.push(...['--name', args.name])
   if (args.tty) dockerArgs.push('-t')
   if (args.rm) dockerArgs.push('--rm')
-  if (args.detach) dockerArgs.push('-d')
+  if (detach) dockerArgs.push('-d')
   if (args.volumes) {
     args.volumes.forEach((pathMap: string) => dockerArgs.push(...['-v', pathMap]))
   }
   return dockerArgs
 }
 
-// TODO: introduce un-named containers - if we dont have a containerName, we inspect for the random name, or the uuid
 class DockerContainer {
   public imageName: string
   public containerName: string
 
-  private _dockerPromise: execa.ExecaChildProcess | null
+  private _dockerChildProcess: execa.ExecaChildProcess | null
 
-  constructor(containerName: string, imageName: string) {
+  constructor(containerName: string, imageName: TmuxDockerVersions) {
     this.imageName = imageName
     this.containerName = containerName
-    this._dockerPromise = null
+    this._dockerChildProcess = null
   }
 
-  run(dockerArgs: IDockerRunArguments, args: string[] = []): execa.ExecaChildProcess<string> {
-    this._dockerPromise = execa(
-      'docker', ['run', ...getDockerRunArgs(dockerArgs), this.imageName, ...args]
+  async runDetached(dockerArgs: IDockerRunArguments, args: string[] = []): Promise<execa.ExecaChildProcess<string>> {
+    const result = await execa(
+      'docker', ['run', ...getDockerRunArgs(true, dockerArgs), this.imageName, ...args]
     )
-    return this._dockerPromise
+    return result
+  }
+
+  runAttached(dockerArgs: IDockerRunArguments, args: string[] = []): execa.ExecaChildProcess<string> {
+    this._dockerChildProcess = execa(
+      'docker', ['run', ...getDockerRunArgs(false, dockerArgs), this.imageName, ...args]
+    )
+    return this._dockerChildProcess
   }
 
   async kill(): Promise<void> {
-    await execa('docker', ['rm', '-f', this.containerName])
-    if (this._dockerPromise !== null) this._dockerPromise.kill()
+    try {
+      await execa('docker', ['rm', '-f', this.containerName])
+    } catch (error) {
+      // the container does not exist, which is okay
+    }
+    if (this._dockerChildProcess !== null) {
+      this._dockerChildProcess.kill()
+    }
   }
 }
 
@@ -69,14 +87,27 @@ interface IDockerTmuxRunResult {
   exitCode: number
 }
 
-//TODO: always inherit volume name from the containername
 export default class DockerTmux {
-  private _hostVolume: DockerVolume
-  private _container: DockerContainer
 
-  constructor(containerName?: string, hostVolume?: string) {
-    this._hostVolume = new DockerVolume(hostVolume || 'tmux-volume')
-    this._container = new DockerContainer(containerName || 'tmux', 'tmux:latest')
+  constructor(
+    private _hostVolume: DockerVolume,
+    private _container: DockerContainer
+  ) {}
+
+  static newWithPrefix(prefix?: string): DockerTmux {
+    const name = `${prefix ? `${prefix}-` : ''}${getRandomString()}`
+    return DockerTmux.newWithContainerName(name)
+  }
+
+  static newWithContainerName(name: string, volumeName?: string): DockerTmux {
+    const container = new DockerContainer(name, 'tmux:latest')
+    const volume = new DockerVolume(volumeName || `${name}-tmux-local-volume`)
+    return new DockerTmux(volume, container)
+  }
+
+  static newWithVolume(volume: DockerVolume, name?: string): DockerTmux {
+    const container = new DockerContainer(name || getRandomString(), 'tmux:latest')
+    return new DockerTmux(volume, container)
   }
 
   async create(): Promise<IDockerTmuxRunResult> {
@@ -94,10 +125,9 @@ export default class DockerTmux {
       volumes: [
         `${this._hostVolume.name}:/tmp`
       ],
-      rm: true,
-      detach
+      rm: true
     }
-    const result = await this._container.run(dockerArgs, args)
+    const result = detach ? (await this._container.runDetached(dockerArgs, args)) : (await this._container.runAttached(dockerArgs, args))
     const { stdout, stderr, exitCode } = result
     return {
       stdout, stderr, exitCode
@@ -107,5 +137,9 @@ export default class DockerTmux {
   async stop(): Promise<void> {
     await this._container.kill()
     await this._hostVolume.remove()
+  }
+
+  get volume(): DockerVolume {
+    return this._hostVolume
   }
 }
