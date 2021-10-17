@@ -5164,10 +5164,11 @@ packages:
     dev: false
 
   file:projects/docker-tmux.tgz:
-    resolution: {integrity: sha512-P/ZG72sE1JHxqqlirfbE4kvB7AaYITUKQcWqHT2tzQfSAYVCP+TpNsQ2yHqdBUeTfUNIXT+i1Be3iqf/1RY9Rg==, tarball: file:projects/docker-tmux.tgz}
+    resolution: {integrity: sha512-jKks+mVgWgIeoNVd85ErWdRRZJENr3MNf3qcyEpdkQEdTKujPEwJ9zj+BjT3QF7q4Er9qXL+I3OgJnJHoN8lZg==, tarball: file:projects/docker-tmux.tgz}
     name: '@rush-temp/docker-tmux'
     version: 0.0.0
     dependencies:
+      '@microsoft/api-extractor': 7.18.16
       '@rushstack/eslint-config': 2.4.3_eslint@7.32.0
       '@rushstack/heft': 0.41.7
       '@rushstack/heft-node-rig': 1.2.26_@rushstack+heft@0.41.7

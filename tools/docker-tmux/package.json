@@ -14,7 +14,8 @@
     "@rushstack/heft-node-rig": "^1.2.26",
     "@types/heft-jest": "1.0.2",
     "@types/node": "16.11.0",
-    "eslint": "~7.32.0"
+    "eslint": "~7.32.0",
+    "@microsoft/api-extractor": "~7.18.16"
   },
   "dependencies": {
     "execa": "~5.1.1"

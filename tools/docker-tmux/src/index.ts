@@ -62,13 +62,24 @@ class DockerVolume {
   }
 }
 
-interface IDockerTmuxRunResult {
+/**
+ * Returns a new instance of the class.
+ * @public
+ */
+export interface IDockerTmuxRunResult {
+  /**
+   * hello world
+   */
   stdout: string,
   stderr: string,
   exitCode: number
 }
 
 
+/**
+ * Wrapper for a tmux instance running in docker
+ * @beta
+ */
 export default class DockerTmux {
   private _hostVolume: DockerVolume
   private _container: DockerContainer
@@ -81,6 +92,9 @@ export default class DockerTmux {
     this._containerName = containerName
   }
 
+  /**
+   * some function
+   */
   async create(): Promise<IDockerTmuxRunResult> {
     return this._run(true)
   }
