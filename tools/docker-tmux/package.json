@@ -6,7 +6,7 @@
   "main": "lib/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "heft test --clean"
+    "build": "./build-docker.sh && heft test --clean"
   },
   "devDependencies": {
     "@rushstack/eslint-config": "^2.4.3",

@@ -77,7 +77,7 @@ export default class DockerTmux {
   constructor(hostVolume?: string);
   constructor(containerName: string, hostVolume?: string) {
     this._hostVolume = new DockerVolume(hostVolume || 'tmux-volume')
-    this._container = new DockerContainer('tmux', 'c101a2ae3350')
+    this._container = new DockerContainer('tmux', 'tmux:latest')
     this._containerName = containerName
   }
 
