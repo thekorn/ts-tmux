@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-parameter-properties */
 /* eslint-disable @typescript-eslint/explicit-member-accessibility */
 import { TmuxSessions, TmuxSession } from './sessions'
-import { TmuxWindows } from './windows'
+import { TmuxWindows, TmuxWindow } from './windows'
 
 import type { ITmuxBin } from './bin'
 
@@ -22,13 +22,28 @@ class TmuxNewSessionArgs {
 
 class TmuxListWindowsArgs {
   constructor(
-    protected targetSession?: string
+    protected targetSession?: TmuxSession
   ) {}
 
   toRunArgs(): string[] {
-    const args: string[] = ['list-windows']
-    if (this.targetSession) args.push(...['-t', this.targetSession])
+    const args: string[] = ['list-windows', '-F', '#S:#I:#W']
+    if (this.targetSession) args.push(...['-t', this.targetSession.id])
     else args.push('-a')
+    return args
+  }
+}
+
+class TmuxNewWindowArgs {
+  constructor(
+    protected name?: string,
+    protected targetSession?: TmuxSession
+  ) {}
+
+  toRunArgs(): string[] {
+    // alwas print info about new window
+    const args: string[] = ['new-window', '-P', '-F', '#S:#I:#W']
+    if (this.name) args.push(...['-n', this.name])
+    if (this.targetSession) args.push(...['-t', this.targetSession.id])
     return args
   }
 }
@@ -51,9 +66,9 @@ export class TmuxClient {
     return TmuxSessions.fromListSessions(result.stdout);
   }
 
-  async killSession(name: string): Promise<boolean> {
+  async killSession(session: TmuxSession): Promise<boolean> {
     try {
-      await this._bin.run(['kill-session', '-t', name])
+      await this._bin.run(['kill-session', '-t', session.id])
     } catch (error) {
       return false
     }
@@ -63,5 +78,11 @@ export class TmuxClient {
   async listWindows(...args: ConstructorParameters<typeof TmuxListWindowsArgs>): Promise<TmuxWindows> {
     const result = await this._bin.run(new TmuxListWindowsArgs(...args).toRunArgs())
     return TmuxWindows.fromListWindows(result.stdout);
+  }
+
+  async newWindow(...args: ConstructorParameters<typeof TmuxNewWindowArgs>): Promise<TmuxWindow> {
+    const result = await this._bin.run(new TmuxNewWindowArgs(...args).toRunArgs())
+    const window = TmuxWindow.fromListWindows(result.stdout)
+    return window
   }
 }

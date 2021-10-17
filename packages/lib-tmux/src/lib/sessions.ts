@@ -13,7 +13,7 @@ export class TmuxSession {
   }
 
   get id(): string {
-    return this.name
+    return `${this.name}:`
   }
 
 }
@@ -21,7 +21,7 @@ export class TmuxSession {
 export class TmuxSessions extends Map<string, TmuxSession>{
   static fromListSessions(output: string): TmuxSessions {
     const result: Array<[string, TmuxSession]> = output.split('\n').map((line) => {
-      const session = TmuxSession.fromListSessions(line)
+      const session = TmuxSession.fromListSessions(line.trim())
       return [session.name, session]
     })
     return new TmuxSessions(result)

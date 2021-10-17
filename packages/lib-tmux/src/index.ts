@@ -16,10 +16,15 @@ async function main(): Promise<void> {
   await client.newSession()
   const session = await client.newSession('test')
   console.log('sessions', await client.listSessions());
-  console.log('remove sessions', await client.killSession(session.id));
+  console.log('remove sessions', await client.killSession(session));
   console.log('sessions', await client.listSessions());
 
   console.log('done, waiting....');
+  console.log('windows', await client.listWindows())
+  await client.newWindow()
+  await client.newWindow()
+  await client.newWindow('feature/BK-345345', (await client.listSessions()).get('0'))
+  await client.newWindow()
   console.log('windows', await client.listWindows())
   console.log('stopping....');
   await tmux.stop()
