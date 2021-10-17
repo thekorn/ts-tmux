@@ -1,5 +1,6 @@
 import DockerTmux from '@thekorn/docker-tmux'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { delay } from './utils'
 import { TmuxClient } from './client'
 
@@ -12,11 +13,10 @@ async function main(): Promise<void> {
   await client.listSessions()
   await client.newSession()
   await client.newSession('test')
-  const sessions = await client.listSessions()
-  console.log('sessions', sessions);
+  console.log('sessions', await client.listSessions());
   
   console.log('done, waiting....');
-  await delay(5)
+  console.log('windows', await client.listWindows())
   console.log('stopping....');
   await tmux.stop()
   console.log('done.');
