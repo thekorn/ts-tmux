@@ -28,14 +28,12 @@ function getDockerRunArgs(detach: boolean, args: IDockerRunArguments): string[] 
 }
 
 class DockerContainer {
-  public imageName: string
-  public containerName: string
-
   private _dockerChildProcess: execa.ExecaChildProcess | null
 
-  constructor(containerName: string, imageName: TmuxDockerVersions) {
-    this.imageName = imageName
-    this.containerName = containerName
+  constructor(
+    public containerName: string, 
+    public imageName: TmuxDockerVersions
+  ) {
     this._dockerChildProcess = null
   }
 
@@ -66,11 +64,9 @@ class DockerContainer {
 }
 
 class DockerVolume {
-  private _name: string
-
-  constructor(name: string) {
-    this._name = name
-  }
+  constructor(
+    private _name: string
+  ) {}
 
   get name(): string {
     return this._name
