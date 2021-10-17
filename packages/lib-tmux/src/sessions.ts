@@ -12,6 +12,10 @@ export class TmuxSession {
     return new TmuxSession(name, attached)
   }
 
+  get id(): string {
+    return this.name
+  }
+
 }
 
 export class TmuxSessions extends Map<string, TmuxSession>{

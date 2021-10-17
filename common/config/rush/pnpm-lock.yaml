@@ -5185,7 +5185,7 @@ packages:
     dev: false
 
   file:projects/libtmux.tgz:
-    resolution: {integrity: sha512-re/iBrHi7FWOgiJk+sm3POlgppfFpadnmJyKBspVYoJCn4DXCRPk3ArcUJtufNBKRRX+HxQdn+0g7zffkvqOjA==, tarball: file:projects/libtmux.tgz}
+    resolution: {integrity: sha512-nGnfFr8/OPhQdBxfefV4w3yeZncBWlA/71hrH6tmjcPSKFi9xCd9vk1Gxn+KrQrw/oIUiskFyC+4+YM3Z5oVrA==, tarball: file:projects/libtmux.tgz}
     name: '@rush-temp/libtmux'
     version: 0.0.0
     dependencies:
@@ -5195,6 +5195,7 @@ packages:
       '@types/heft-jest': 1.0.2
       '@types/node': 16.11.0
       eslint: 7.32.0
+      execa: 5.1.1
     transitivePeerDependencies:
       - bufferutil
       - canvas

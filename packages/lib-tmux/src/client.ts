@@ -13,7 +13,7 @@ class TmuxNewSessionArgs {
 
   toRunArgs(): string[] {
     // alwas print info about new session
-    const args: string[] = ['-P']
+    const args: string[] = ['new-session', '-P']
     if (this.name) args.push(...['-s', this.name])
     if (!this.attach) args.push('-d')
     return args
@@ -26,7 +26,7 @@ class TmuxListWindowsArgs {
   ) {}
 
   toRunArgs(): string[] {
-    const args: string[] = []
+    const args: string[] = ['list-windows']
     if (this.targetSession) args.push(...['-t', this.targetSession])
     else args.push('-a')
     return args
@@ -41,9 +41,7 @@ export class TmuxClient {
   }
 
   async newSession(...args: ConstructorParameters<typeof TmuxNewSessionArgs>): Promise<TmuxSession> {
-    const command = ['new-session']
-    if (args) command.push(...new TmuxNewSessionArgs(...args).toRunArgs())
-    const result = await this._bin.run(command)
+    const result = await this._bin.run(new TmuxNewSessionArgs(...args).toRunArgs())
     const session = TmuxSession.fromListSessions(result.stdout)
     return session
   }
@@ -53,10 +51,17 @@ export class TmuxClient {
     return TmuxSessions.fromListSessions(result.stdout);
   }
 
+  async killSession(name: string): Promise<boolean> {
+    try {
+      await this._bin.run(['kill-session', '-t', name])
+    } catch (error) {
+      return false
+    }
+    return true
+  }
+
   async listWindows(...args: ConstructorParameters<typeof TmuxListWindowsArgs>): Promise<TmuxWindows> {
-    const command = ['list-windows']
-    if (args) command.push(...new TmuxListWindowsArgs(...args).toRunArgs())
-    const result = await this._bin.run(command)
+    const result = await this._bin.run(new TmuxListWindowsArgs(...args).toRunArgs())
     return TmuxWindows.fromListWindows(result.stdout);
   }
 }

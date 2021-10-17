@@ -16,5 +16,8 @@
     "@types/node": "16.11.0",
     "eslint": "~7.32.0",
     "@thekorn/docker-tmux": "~1.0.0"
+  },
+  "dependencies": {
+    "execa": "~5.1.1"
   }
 }

@@ -19,8 +19,6 @@ export class TmuxWindow {
 
 export class TmuxWindows extends Map<string, TmuxWindow>{
   static fromListWindows(output: string): TmuxWindows {
-    console.log('list windows', output);
-    
     const result: Array<[string, TmuxWindow]> = output.split('\n').map((line) => {
         const window = TmuxWindow.fromListWindows(line)
         return [window.id, window]

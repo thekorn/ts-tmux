@@ -1,8 +1,10 @@
 import DockerTmux from '@thekorn/docker-tmux'
 
+import { TmuxClient } from './client'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { SystemTmux } from './bin'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { delay } from './utils'
-import { TmuxClient } from './client'
 
 
 async function main(): Promise<void> {
@@ -12,14 +14,26 @@ async function main(): Promise<void> {
   console.log('list sessions....');
   await client.listSessions()
   await client.newSession()
-  await client.newSession('test')
+  const session = await client.newSession('test')
   console.log('sessions', await client.listSessions());
-  
+  console.log('remove sessions', await client.killSession(session.id));
+  console.log('sessions', await client.listSessions());
+
   console.log('done, waiting....');
   console.log('windows', await client.listWindows())
   console.log('stopping....');
   await tmux.stop()
   console.log('done.');
+
+  //const client1 = new TmuxClient(new SystemTmux())
+  //console.log('list sessions....');
+  //await client1.listSessions()
+  //await client1.newSession()
+  //await client1.newSession('test')
+  //console.log('sessions', await client1.listSessions());
+  //
+  //console.log('done, waiting....');
+  //console.log('windows', await client1.listWindows())
 }
 
 main()
