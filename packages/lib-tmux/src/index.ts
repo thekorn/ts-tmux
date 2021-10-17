@@ -1,10 +1,10 @@
 import DockerTmux from '@thekorn/docker-tmux'
 
-import { TmuxClient } from './client'
+import { TmuxClient } from './lib/client'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { SystemTmux } from './bin'
+import { SystemTmux } from './lib/bin'
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { delay } from './utils'
+import { delay } from './lib/utils'
 
 
 async function main(): Promise<void> {

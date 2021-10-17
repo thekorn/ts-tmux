@@ -68,4 +68,4 @@ common/autoinstallers/*/.npmrc
 .heft
 **/temp/
 **/node_modules/
-**/lib/
+*/*/lib/
