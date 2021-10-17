@@ -1,7 +1,7 @@
 import DockerTmux from '@thekorn/docker-tmux'
 
 import { delay } from './utils'
-import { TmuxClient, TmuxNewSessionArgs } from './client'
+import { TmuxClient } from './client'
 
 
 async function main(): Promise<void> {
@@ -11,7 +11,7 @@ async function main(): Promise<void> {
   console.log('list sessions....');
   await client.listSessions()
   await client.newSession()
-  await client.newSession(new TmuxNewSessionArgs('test'))
+  await client.newSession('test')
   const sessions = await client.listSessions()
   console.log('sessions', sessions);
   

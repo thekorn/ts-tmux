@@ -26,14 +26,13 @@ export class TmuxClient {
     this._bin = bin
   }
 
-  async newSession(args: TmuxNewSessionArgs =  new TmuxNewSessionArgs()): Promise<TmuxSession> {
+  async newSession(...args: ConstructorParameters<typeof TmuxNewSessionArgs>): Promise<TmuxSession> {
     const command = ['new-session']
-    if (args) command.push(...args.toRunArgs())
+    if (args) command.push(...new TmuxNewSessionArgs(...args).toRunArgs())
     const result = await this._bin.run(command)
     const session = TmuxSession.fromListSessions(result.stdout)
     return session
   }
-
 
   async listSessions(): Promise<TmuxSessions> {
     const result = await this._bin.run(['list-sessions'])
