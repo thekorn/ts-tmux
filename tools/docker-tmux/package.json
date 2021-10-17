@@ -1,0 +1,22 @@
+{
+  "name": "@thekorn/docker-tmux",
+  "description": "spawn a tmux server using docker",
+  "version": "1.0.0",
+  "private": true,
+  "main": "lib/index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "heft test --clean"
+  },
+  "devDependencies": {
+    "@rushstack/eslint-config": "^2.4.3",
+    "@rushstack/heft": "^0.41.7",
+    "@rushstack/heft-node-rig": "^1.2.26",
+    "@types/heft-jest": "1.0.2",
+    "@types/node": "16.11.0",
+    "eslint": "~7.32.0"
+  },
+  "dependencies": {
+    "execa": "~5.1.1"
+  }
+}
