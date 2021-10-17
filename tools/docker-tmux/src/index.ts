@@ -21,6 +21,7 @@ function getDockerRunArgs(args: IDockerRunArguments): string[] {
   return dockerArgs
 }
 
+// TODO: introduce un-named containers - if we dont have a containerName, we inspect for the random name, or the uuid
 class DockerContainer {
   public imageName: string
   public containerName: string
@@ -68,17 +69,14 @@ interface IDockerTmuxRunResult {
   exitCode: number
 }
 
-
+//TODO: always inherit volume name from the containername
 export default class DockerTmux {
   private _hostVolume: DockerVolume
   private _container: DockerContainer
-  private _containerName: string | undefined
 
-  constructor(hostVolume?: string);
-  constructor(containerName: string, hostVolume?: string) {
+  constructor(containerName?: string, hostVolume?: string) {
     this._hostVolume = new DockerVolume(hostVolume || 'tmux-volume')
-    this._container = new DockerContainer('tmux', 'tmux:latest')
-    this._containerName = containerName
+    this._container = new DockerContainer(containerName || 'tmux', 'tmux:latest')
   }
 
   async create(): Promise<IDockerTmuxRunResult> {
@@ -91,7 +89,7 @@ export default class DockerTmux {
 
   private async _run(detach: boolean = false, args: string[] = []): Promise<IDockerTmuxRunResult> {
     const dockerArgs: IDockerRunArguments = {
-      name: this._containerName,
+      name: this._container.containerName,
       tty: true,
       volumes: [
         `${this._hostVolume.name}:/tmp`
