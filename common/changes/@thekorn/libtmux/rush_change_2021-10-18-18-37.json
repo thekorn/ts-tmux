@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@thekorn/libtmux",
+      "comment": "Refined README",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@thekorn/libtmux"
+}
